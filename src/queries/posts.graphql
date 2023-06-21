@@ -1,0 +1,21 @@
+fragment MinimalPost on Post {
+    id
+    title
+    content
+    attachments {
+        ...MinimalAttachment
+    }
+
+    attachmentCount
+    replyCount
+}
+
+query boardThreads($boardId: String!) {
+    board(id: $boardId) {
+        id
+        name
+        threads: openingPosts {
+            ...MinimalPost
+        }
+    }
+}

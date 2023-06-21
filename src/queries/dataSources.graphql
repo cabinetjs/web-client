@@ -24,6 +24,12 @@ query dataSources {
     }
 }
 
+query minimalDataSources {
+    dataSources {
+        ...MinimalDataSource
+    }
+}
+
 query dataSourceCount {
     dataSourceCount
 }

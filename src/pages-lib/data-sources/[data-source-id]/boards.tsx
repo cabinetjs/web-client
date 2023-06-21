@@ -9,13 +9,12 @@ import { getThumbnailUrl } from "@utils/attachments";
 import { Nullable } from "@utils/types";
 
 export interface DataSourceBoardsPageProps {
-    dataSourceId: string;
     items: Nullable<MinimalBoardFragment[]>;
     itemCount: number;
     loading: boolean;
 }
 
-export function DataSourceBoardsPage({ items, itemCount, loading, dataSourceId }: DataSourceBoardsPageProps) {
+export function DataSourceBoardsPage({ items, itemCount, loading }: DataSourceBoardsPageProps) {
     return (
         <CardList count={itemCount} items={items} loading={loading}>
             {item => (
@@ -26,7 +25,7 @@ export function DataSourceBoardsPage({ items, itemCount, loading, dataSourceId }
                     mediaCount={item.mediaCount}
                     postCount={item.postCount}
                     thumbnail={getThumbnailUrl(item.latestAttachment, 320, 180)}
-                    href={`/data-sources/${dataSourceId}/${item.id}`}
+                    href={`/boards/${item.id}`}
                 />
             )}
         </CardList>

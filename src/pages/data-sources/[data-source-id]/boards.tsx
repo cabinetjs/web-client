@@ -1,6 +1,6 @@
 import { queryDataSource, useDataSourceBoardsQuery } from "@apollo/queries";
 
-import { DataSourceBoardsPage } from "@pages/data-sources/[data-source-id]";
+import { DataSourceBoardsPage } from "@pages/data-sources/[data-source-id]/boards";
 
 import { installRouteMiddleware } from "@utils/routes/middleware";
 import { PageProps } from "@utils/routes/types";
@@ -17,14 +17,7 @@ export default function DataSourceBoards({ itemCount, dataSourceId }: DataSource
         },
     });
 
-    return (
-        <DataSourceBoardsPage
-            loading={loading}
-            items={data?.dataSource?.boards}
-            itemCount={itemCount}
-            dataSourceId={dataSourceId}
-        />
-    );
+    return <DataSourceBoardsPage loading={loading} items={data?.dataSource?.boards} itemCount={itemCount} />;
 }
 
 export const getServerSideProps = installRouteMiddleware<DataSourcePageProps>()(async ({ params }, { client }) => {
