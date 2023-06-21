@@ -15,13 +15,14 @@
         "jsx": "preserve",
         "incremental": true,
         "paths": {
-            "@/*": ["./src/*"],
             "@components/*": ["./src/components/*"],
             "@pages/*": ["./src/pages-lib/*"],
             "@constants/*": ["./src/constants/*"],
             "@styles/*": ["./src/styles/*"],
             "@utils/*": ["./src/utils/*"],
             "@res/*": ["./src/res/*"],
+            "@apollo/queries": ["./src/queries/index.tsx"],
+            "@apollo/*": ["./src/apollo/*"]
         }
     },
     "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

@@ -1,0 +1,22 @@
+fragment MinimalDataSource on DataSource {
+    id
+}
+
+fragment FullDataSource on DataSource {
+    ...MinimalDataSource
+    postCount
+    mediaCount
+    latestAttachment {
+        ...FullAttachment
+    }
+}
+
+query dataSources {
+    dataSources {
+        ...FullDataSource
+    }
+}
+
+query dataSourceCount {
+    dataSourceCount
+}

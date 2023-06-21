@@ -1,0 +1,13 @@
+fragment MinimalAttachment on Attachment {
+    id
+    uri
+    uid
+}
+
+fragment FullAttachment on Attachment {
+    ...MinimalAttachment
+    mimeType
+    extension
+    name
+    hash
+}
