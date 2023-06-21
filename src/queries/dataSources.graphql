@@ -11,6 +11,13 @@ fragment FullDataSource on DataSource {
     }
 }
 
+query dataSource($id: String!) {
+    dataSource(name: $id) {
+        ...FullDataSource
+        boardCount
+    }
+}
+
 query dataSources {
     dataSources {
         ...FullDataSource

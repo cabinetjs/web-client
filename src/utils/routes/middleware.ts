@@ -19,16 +19,18 @@ export type RouteMiddlewareClient<
 ) => Promise<GetServerSidePropsResult<T>>;
 
 export function installRouteMiddleware<T extends PageProps>(title?: string) {
-    return (origin: RouteMiddlewareClient<Omit<T, "title">>): GetServerSideProps<T> => {
+    return (origin: RouteMiddlewareClient<Omit<T, "title"> & { title?: string }>): GetServerSideProps<T> => {
         return async context => {
             const apolloClient = createClient({ headers: context.req.headers });
             const data = await origin(context, { client: apolloClient });
 
             if ("props" in data) {
+                const props = await data.props;
+
                 return {
                     props: {
                         ...data.props,
-                        title,
+                        title: title ?? props.title ?? null,
                     } as T,
                 };
             }
