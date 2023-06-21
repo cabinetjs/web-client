@@ -19,3 +19,12 @@ query boardThreads($boardId: String!) {
         }
     }
 }
+
+query dataSourceThreads($dataSourceId: String!) {
+    dataSource(name: $dataSourceId) {
+        id
+        threads: openingPosts {
+            ...MinimalPost
+        }
+    }
+}
