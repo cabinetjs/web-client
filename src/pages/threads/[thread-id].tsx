@@ -27,7 +27,7 @@ export default function Thread({ threadId }: ThreadPageProps) {
     const posts = [data.post, ...data.post.replies];
 
     return (
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" sx={{ px: "0 !important" }}>
             <Stack spacing={1}>
                 {posts.map(post => (
                     <ImageBoardPostView key={post.id} post={post} />
