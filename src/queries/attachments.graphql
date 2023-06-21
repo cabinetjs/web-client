@@ -10,4 +10,5 @@ fragment FullAttachment on Attachment {
     extension
     name
     hash
+    size
 }

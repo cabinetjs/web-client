@@ -24,7 +24,7 @@ export default function DataSourceThreads({ dataSourceId, threadCount }: DataSou
             {item => (
                 <Card
                     key={item.id}
-                    title={item.title || `Thread #${item.id}`}
+                    title={item.title || `Thread #${item.no}`}
                     description={item.content ?? ""}
                     postCount={item.replyCount}
                     mediaCount={item.attachmentCount}

@@ -1,5 +1,6 @@
 fragment MinimalPost on Post {
     id
+    no
     title
     content
     attachments {
@@ -8,6 +9,17 @@ fragment MinimalPost on Post {
 
     attachmentCount
     replyCount
+}
+
+fragment FullPost on Post {
+    id
+    no
+    title
+    content
+    writtenAt
+    attachments {
+        ...FullAttachment
+    }
 }
 
 query boardThreads($boardId: String!) {
@@ -26,5 +38,22 @@ query dataSourceThreads($dataSourceId: String!) {
         threads: openingPosts {
             ...MinimalPost
         }
+    }
+}
+
+query thread($threadId: String!) {
+    post(id: $threadId) {
+        ...FullPost
+        replies {
+            ...FullPost
+        }
+    }
+}
+
+query threadMetadata($threadId: String!) {
+    post(id: $threadId) {
+        id
+        no
+        title
     }
 }

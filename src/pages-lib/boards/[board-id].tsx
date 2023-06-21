@@ -18,7 +18,7 @@ export function BoardPage({ threadCount, threads, loading }: BoardPageProps) {
             {item => (
                 <Card
                     key={item.id}
-                    title={item.title || `Thread #${item.id}`}
+                    title={item.title || `Thread #${item.no}`}
                     description={item.content ?? ""}
                     mediaCount={item.attachmentCount}
                     postCount={item.replyCount}
