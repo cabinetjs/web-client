@@ -1,5 +1,7 @@
 import React from "react";
+import { filesize } from "filesize";
 
+import { Box, Modal, Typography } from "@mui/material";
 import { FullAttachmentFragment } from "@apollo/queries";
 
 import {
@@ -11,8 +13,6 @@ import {
     ThumbnailContainer,
     ViewerWrapper,
 } from "@components/MediaViewer.styles";
-import { Box, Typography } from "@mui/material";
-import { filesize } from "filesize";
 
 export interface ImageViewerProps {
     attachments: FullAttachmentFragment[];
@@ -113,42 +113,44 @@ export function MediaViewer({ attachments, opened, onClose }: ImageViewerProps) 
     const currentAttachment = attachments[index];
 
     return (
-        <Root opened={opened}>
-            <ViewerWrapper onClick={handleOutsideClick}>
-                {currentAttachment && opened && (
-                    <Media attachment={currentAttachment} onClick={handleClick} onContextMenu={handleContextMenu} />
-                )}
-                {currentAttachment && opened && (
-                    <Metadata>
-                        <Typography variant="body1" fontSize="0.9rem">
-                            {index + 1} / {attachments.length}
-                        </Typography>
-                        <Typography variant="body1" fontSize="0.9rem">
-                            {currentAttachment.name}
-                            {currentAttachment.extension}
-                        </Typography>
-                        <Box display="flex">
+        <Modal open={opened} componentsProps={{ backdrop: { sx: { background: `rgba(0, 0, 0, 0.75)` } } }}>
+            <Root opened={opened}>
+                <ViewerWrapper onClick={handleOutsideClick}>
+                    {currentAttachment && opened && (
+                        <Media attachment={currentAttachment} onClick={handleClick} onContextMenu={handleContextMenu} />
+                    )}
+                    {currentAttachment && opened && (
+                        <Metadata>
                             <Typography variant="body1" fontSize="0.9rem">
-                                {`${filesize(
-                                    currentAttachment.size,
-                                )} (${currentAttachment.size.toLocaleString()} bytes)`}
+                                {index + 1} / {attachments.length}
                             </Typography>
-                        </Box>
-                    </Metadata>
-                )}
-            </ViewerWrapper>
-            <ThumbnailContainer>
-                {attachments.map((attachment, i) => (
-                    <ThumbnailButton
-                        ref={dom => setRef(dom, i)}
-                        key={attachment.id}
-                        active={i === index}
-                        onClick={() => handleThumbnailClick(i)}
-                    >
-                        <Thumbnail attachment={attachment} size={[150]} />
-                    </ThumbnailButton>
-                ))}
-            </ThumbnailContainer>
-        </Root>
+                            <Typography variant="body1" fontSize="0.9rem">
+                                {currentAttachment.name}
+                                {currentAttachment.extension}
+                            </Typography>
+                            <Box display="flex">
+                                <Typography variant="body1" fontSize="0.9rem">
+                                    {`${filesize(
+                                        currentAttachment.size,
+                                    )} (${currentAttachment.size.toLocaleString()} bytes)`}
+                                </Typography>
+                            </Box>
+                        </Metadata>
+                    )}
+                </ViewerWrapper>
+                <ThumbnailContainer>
+                    {attachments.map((attachment, i) => (
+                        <ThumbnailButton
+                            ref={dom => setRef(dom, i)}
+                            key={attachment.id}
+                            active={i === index}
+                            onClick={() => handleThumbnailClick(i)}
+                        >
+                            <Thumbnail attachment={attachment} size={[150]} />
+                        </ThumbnailButton>
+                    ))}
+                </ThumbnailContainer>
+            </Root>
+        </Modal>
     );
 }

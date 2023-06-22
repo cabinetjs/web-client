@@ -17,17 +17,6 @@ export const Root = styled.div<{ opened: boolean }>`
     z-index: 10000;
 
     color: white;
-    background: ${({ opened }) => (opened ? "rgba(0, 0, 0, 0.75)" : "transparent")};
-    pointer-events: ${({ opened }) => (opened ? "auto" : "none")};
-    visibility: ${({ opened }) => (opened ? "visible" : "hidden")};
-
-    opacity: ${({ opened }) => (opened ? 1 : 0)};
-
-    transition: ${({ theme }) =>
-        theme.transitions.create(["opacity"], {
-            easing: theme.transitions.easing.easeInOut,
-            duration: theme.transitions.duration.shortest,
-        })};
 `;
 
 export const ViewerWrapper = styled.div`
