@@ -9,6 +9,7 @@ import { useApollo } from "@apollo/useApollo";
 
 import { Layout } from "@components/Layout";
 import { VideoContext } from "@components/Video/Context";
+import { PreviewContext } from "@components/Preview/Context";
 
 import { theme } from "@styles/theme";
 import { PageProps } from "@utils/routes/types";
@@ -17,14 +18,16 @@ export default function App({ Component, pageProps }: AppProps<PageProps>) {
     const apolloClient = useApollo(pageProps);
 
     return (
-        <VideoContext>
-            <ApolloProvider client={apolloClient}>
-                <ThemeProvider theme={theme}>
-                    <Layout title={pageProps.title}>
-                        <Component {...pageProps} />
-                    </Layout>
-                </ThemeProvider>
-            </ApolloProvider>
-        </VideoContext>
+        <PreviewContext>
+            <VideoContext>
+                <ApolloProvider client={apolloClient}>
+                    <ThemeProvider theme={theme}>
+                        <Layout title={pageProps.title}>
+                            <Component {...pageProps} />
+                        </Layout>
+                    </ThemeProvider>
+                </ApolloProvider>
+            </VideoContext>
+        </PreviewContext>
     );
 }

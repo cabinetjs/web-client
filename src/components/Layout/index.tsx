@@ -10,6 +10,8 @@ import { AppBar } from "@components/AppBar";
 import { SideBar } from "@components/SideBar";
 import { LayoutContext } from "@components/Layout/context";
 import { MediaViewer } from "@components/Media/MediaViewer";
+import { Preview } from "@components/Media/Preview";
+import { usePreview } from "@components/Preview/Context";
 
 import { SIDEBAR_WIDTH } from "@constants/layout";
 
@@ -19,6 +21,7 @@ export interface LayoutProps {
 }
 
 export function Layout({ children, title }: LayoutProps) {
+    const { attachment } = usePreview();
     const [attachments, setAttachments] = React.useState<FullAttachmentFragment[]>([]);
     const [mediaViewerVisibility, setMediaViewerVisibility] = React.useState<boolean>(false);
     const [sideBarOpen, setSideBarOpen] = React.useState<boolean>(false);
@@ -63,6 +66,7 @@ export function Layout({ children, title }: LayoutProps) {
                     opened={mediaViewerVisibility}
                     onClose={handleMediaViewerClose}
                 />
+                <Preview attachment={attachment} />
             </Box>
         </LayoutContext.Provider>
     );

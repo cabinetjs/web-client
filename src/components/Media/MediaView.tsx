@@ -13,9 +13,10 @@ export interface MediaViewProps {
     onClick?(event: React.MouseEvent): void;
     onContextMenu?(event: React.MouseEvent): void;
     className?: string;
+    withoutControls?: boolean;
 }
 
-export function MediaView({ attachment, onClick, className, onContextMenu }: MediaViewProps) {
+export function MediaView({ attachment, onClick, className, onContextMenu, withoutControls }: MediaViewProps) {
     const mime = React.useMemo<string>(
         () => attachment.mimeType ?? (mimeTypes.lookup(attachment.extension) || ""),
         [attachment],
@@ -32,7 +33,7 @@ export function MediaView({ attachment, onClick, className, onContextMenu }: Med
     };
 
     if (mime.startsWith("video/")) {
-        return <VideoView src={url} mime={mime} {...props} />;
+        return <VideoView src={url} mime={mime} withoutControls={withoutControls} {...props} />;
     } else if (mime.startsWith("image/")) {
         return <Image key={url} src={url} alt={`Attachment ${attachment.id}`} {...props} />;
     } else {

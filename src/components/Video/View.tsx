@@ -7,6 +7,7 @@ import { useVideo } from "@components/Video/Context";
 export interface VideoViewProps extends React.VideoHTMLAttributes<HTMLVideoElement> {
     src: string;
     mime: string;
+    withoutControls?: boolean;
 }
 
 export const Root = styled.video`
@@ -14,7 +15,7 @@ export const Root = styled.video`
     cursor: pointer;
 `;
 
-export function VideoView({ src, mime, ...rest }: VideoViewProps) {
+export function VideoView({ src, mime, withoutControls, ...rest }: VideoViewProps) {
     const { subscribeVolume, unsubscribeVolume, addVolume } = useVideo();
     const [videoDOM, setVideoDOM] = React.useState<HTMLVideoElement | null>(null);
     const handleWheel = React.useCallback(
@@ -48,7 +49,7 @@ export function VideoView({ src, mime, ...rest }: VideoViewProps) {
     }, [handleWheel, videoDOM]);
 
     return (
-        <Root ref={setVideoDOM} key={src} controls loop autoPlay {...rest}>
+        <Root ref={setVideoDOM} key={src} controls={!withoutControls} loop autoPlay {...rest}>
             <source type={mime} src={src} />
         </Root>
     );

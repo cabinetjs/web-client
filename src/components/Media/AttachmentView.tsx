@@ -3,6 +3,8 @@ import React from "react";
 import mimeTypes from "mime-types";
 
 import { MediaView } from "@components/Media/MediaView";
+import { usePreview } from "@components/Preview/Context";
+
 import { Root } from "@components/Media/AttachmentView.styles";
 
 import { FullAttachmentFragment } from "@apollo/queries";
@@ -17,6 +19,7 @@ export interface AttachmentViewProps {
 }
 
 export function AttachmentView({ attachment, thumbnailSize }: AttachmentViewProps) {
+    const { setAttachment } = usePreview();
     const [expanded, setExpanded] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [[imageUrl], setImageUrl] = React.useState<[string | null]>([null]);
@@ -24,7 +27,8 @@ export function AttachmentView({ attachment, thumbnailSize }: AttachmentViewProp
 
     const handleClick = React.useCallback(() => {
         setExpanded(prev => !prev);
-    }, []);
+        setAttachment(null);
+    }, [setAttachment]);
 
     React.useEffect(() => {
         if (!expanded) {
@@ -61,9 +65,32 @@ export function AttachmentView({ attachment, thumbnailSize }: AttachmentViewProp
     }
 
     const showLargeImage = expanded && !loading && imageUrl;
+    const handleMouseEnter = React.useCallback(() => {
+        if (showLargeImage) {
+            setAttachment(null);
+            return;
+        }
+
+        setAttachment(attachment);
+    }, [setAttachment, attachment, showLargeImage]);
+
+    const handleMouseLeave = React.useCallback(() => {
+        if (showLargeImage) {
+            setAttachment(null);
+            return;
+        }
+
+        setAttachment(null);
+    }, [setAttachment, showLargeImage]);
 
     return (
-        <Root role="button" tabIndex={-1} onClick={handleClick}>
+        <Root
+            role="button"
+            tabIndex={-1}
+            onClick={handleClick}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+        >
             {(!expanded || (expanded && loading) || loading) && (
                 <img
                     src={thumbnailUrl}
