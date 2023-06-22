@@ -40,9 +40,13 @@ export function MediaViewer({ attachments, opened, onClose }: ImageViewerProps) 
 
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            if (!opened) {
+                return;
+            }
+
             if (e.key === "ArrowLeft") {
                 moveIndex(-1);
-            } else {
+            } else if (e.key === "ArrowRight") {
                 moveIndex(1);
             }
         };
@@ -52,7 +56,7 @@ export function MediaViewer({ attachments, opened, onClose }: ImageViewerProps) 
         return () => {
             window.removeEventListener("keydown", handleKeyDown, false);
         };
-    }, [moveIndex]);
+    }, [moveIndex, opened]);
 
     React.useEffect(() => {
         setIndex(0);
