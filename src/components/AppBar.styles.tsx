@@ -11,4 +11,13 @@ export const Root = styled(MuiAppBar)`
 
     background: rgba(248, 249, 250, 0.5);
     backdrop-filter: blur(6px) saturate(300%);
+
+    ${({ theme }) => theme.breakpoints.down("md")} {
+        width: 100%;
+
+        margin-left: 0;
+
+        color: #fff;
+        background: #1c2536;
+    }
 `;

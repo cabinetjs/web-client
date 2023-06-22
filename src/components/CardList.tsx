@@ -26,7 +26,7 @@ export function CardList<T>({ count, items, children, loading }: CardListProps<T
     }
 
     listItems = listItems.map((item, index) => (
-        <Grid item key={index} sm={6} md={4} lg={4} xl={2.4}>
+        <Grid item key={index} xs={12} sm={6} md={4} lg={4} xl={2.4}>
             {item}
         </Grid>
     ));
