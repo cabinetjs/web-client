@@ -9,7 +9,7 @@ import { FullAttachmentFragment } from "@apollo/queries";
 import { AppBar } from "@components/AppBar";
 import { SideBar } from "@components/SideBar";
 import { LayoutContext } from "@components/Layout/context";
-import { MediaViewer } from "@components/MediaViewer";
+import { MediaViewer } from "@components/Media/MediaViewer";
 
 export interface LayoutProps {
     children: React.ReactNode;

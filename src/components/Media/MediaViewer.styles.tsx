@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
-import { MediaView } from "@components/MediaView";
-import { ThumbnailView } from "@components/ThumbnailView";
+import { MediaView } from "@components/Media/MediaView";
+import { ThumbnailView } from "@components/Media/ThumbnailView";
 import { ButtonBase } from "@mui/material";
 
 export const Root = styled.div<{ opened: boolean }>`

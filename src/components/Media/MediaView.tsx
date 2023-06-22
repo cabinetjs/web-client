@@ -3,7 +3,8 @@ import mimeTypes from "mime-types";
 
 import { FullAttachmentFragment } from "@apollo/queries";
 
-import { Image, Video } from "@components/MediaView.styles";
+import { VideoView } from "@components/Video/View";
+import { Image } from "@components/Media/MediaView.styles";
 
 import { getAttachmentUrl } from "@utils/attachments";
 
@@ -31,11 +32,7 @@ export function MediaView({ attachment, onClick, className, onContextMenu }: Med
     };
 
     if (mime.startsWith("video/")) {
-        return (
-            <Video key={url} controls loop autoPlay {...props}>
-                <source type={mime} src={url} />
-            </Video>
-        );
+        return <VideoView src={url} mime={mime} {...props} />;
     } else if (mime.startsWith("image/")) {
         return <Image key={url} src={url} alt={`Attachment ${attachment.id}`} {...props} />;
     } else {

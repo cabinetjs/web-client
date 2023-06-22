@@ -2,13 +2,13 @@
 import React from "react";
 import mimeTypes from "mime-types";
 
-import { Root } from "@components/AttachmentView.styles";
+import { MediaView } from "@components/Media/MediaView";
+import { Root } from "@components/Media/AttachmentView.styles";
 
 import { FullAttachmentFragment } from "@apollo/queries";
 
 import { getAttachmentUrl, getThumbnailUrl } from "@utils/attachments";
 import { preloadImage, preloadVideo } from "@utils/media";
-import { MediaView } from "@components/MediaView";
 
 export interface AttachmentViewProps {
     attachment: FullAttachmentFragment;

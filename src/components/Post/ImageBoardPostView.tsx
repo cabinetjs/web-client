@@ -4,7 +4,7 @@ import { filesize } from "filesize";
 
 import { Box, Typography } from "@mui/material";
 
-import { AttachmentView } from "@components/AttachmentView";
+import { AttachmentView } from "@components/Media/AttachmentView";
 
 import { Container, Content, Metadata, Root } from "@components/Post/ImageBoardPostView.styles";
 

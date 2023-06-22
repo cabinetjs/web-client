@@ -12,7 +12,7 @@ import {
     ThumbnailButton,
     ThumbnailContainer,
     ViewerWrapper,
-} from "@components/MediaViewer.styles";
+} from "@components/Media/MediaViewer.styles";
 
 export interface ImageViewerProps {
     attachments: FullAttachmentFragment[];

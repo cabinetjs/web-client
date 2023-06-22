@@ -9,6 +9,6 @@ export const Root = styled(MuiAppBar)`
 
     margin-left: ${SIDEBAR_WIDTH}px;
 
-    background: rgba(248, 249, 250, 0.8);
+    background: rgba(248, 249, 250, 0.5);
     backdrop-filter: blur(6px) saturate(300%);
 `;

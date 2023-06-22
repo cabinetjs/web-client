@@ -1,9 +1,8 @@
 import React from "react";
 
 import { FullAttachmentFragment } from "@apollo/queries";
-
-import { Root } from "@components/ThumbnailView.styles";
 import { getThumbnailUrl } from "@utils/attachments";
+import { Root } from "@components/Media/ThumbnailView.styles";
 
 export interface ThumbnailViewProps {
     attachment: FullAttachmentFragment;
