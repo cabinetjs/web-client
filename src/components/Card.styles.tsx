@@ -7,10 +7,8 @@ import { ButtonBase } from "@mui/material";
 export const Root = styled(ButtonBase, { shouldForwardProp: () => true })<
     React.ComponentProps<typeof ButtonBase> & { component?: typeof Link; href?: string }
 >`
-    width: ${({ theme }) => theme.spacing(35)};
-
-    margin-right: ${({ theme }) => theme.spacing(2)};
-    margin-bottom: ${({ theme }) => theme.spacing(2)};
+    width: 100%;
+    height: 100%;
 
     border-radius: 4px;
 

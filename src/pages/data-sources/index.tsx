@@ -1,9 +1,13 @@
+import React from "react";
+
 import { queryDataSourceCount, useDataSourcesQuery } from "@apollo/queries";
 
-import { DataSourcesPage } from "@pages/data-sources";
+import { CardList } from "@components/CardList";
+import { Card } from "@components/Card";
 
 import { installRouteMiddleware } from "@utils/routes/middleware";
 import { PageProps } from "@utils/routes/types";
+import { getThumbnailUrl } from "@utils/attachments";
 
 interface DataSourcesPageProps extends PageProps {
     itemCount: number;
@@ -12,7 +16,20 @@ interface DataSourcesPageProps extends PageProps {
 export default function DataSources({ itemCount }: DataSourcesPageProps) {
     const { data, loading } = useDataSourcesQuery();
 
-    return <DataSourcesPage loading={loading} items={data?.dataSources} itemCount={itemCount} />;
+    return (
+        <CardList count={itemCount} items={data?.dataSources} loading={loading}>
+            {item => (
+                <Card
+                    key={item.id}
+                    title={item.id}
+                    mediaCount={item.mediaCount}
+                    postCount={item.postCount}
+                    thumbnail={getThumbnailUrl(item.latestAttachment, 320, 180)}
+                    href={`/data-sources/${item.id}`}
+                />
+            )}
+        </CardList>
+    );
 }
 
 export const getServerSideProps = installRouteMiddleware<DataSourcesPageProps>("Data Sources")(

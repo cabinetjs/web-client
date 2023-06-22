@@ -15,7 +15,7 @@ export interface ImageBoardPostViewProps {
     post: FullPostFragment;
 }
 
-export function ImageBoardPostView({ post }: ImageBoardPostViewProps) {
+export const ImageBoardPostView = React.memo(({ post }: ImageBoardPostViewProps) => {
     const thumbnailUrl = getThumbnailUrl(post.attachments[0], 150);
     const attachment = post.attachments[0];
 
@@ -73,4 +73,6 @@ export function ImageBoardPostView({ post }: ImageBoardPostViewProps) {
             </Container>
         </Root>
     );
-}
+});
+
+ImageBoardPostView.displayName = "ImageBoardPostView";

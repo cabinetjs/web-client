@@ -1,9 +1,10 @@
-import { BoardPage } from "@pages/boards/[board-id]";
-
 import { PageProps } from "@utils/routes/types";
 import { installRouteMiddleware } from "@utils/routes/middleware";
 
 import { queryBoardThreads, useBoardThreadsQuery } from "@apollo/queries";
+import { CardList } from "@components/CardList";
+import { Card } from "@components/Card";
+import { getThumbnailUrl } from "@utils/attachments";
 
 export interface BoardPageProps extends PageProps {
     boardId: string;
@@ -15,7 +16,20 @@ export default function Board({ threadCount, boardId }: BoardPageProps) {
         variables: { boardId },
     });
 
-    return <BoardPage threadCount={threadCount} loading={loading} threads={data?.board?.threads} />;
+    return (
+        <CardList count={threadCount} items={data?.board?.threads} loading={loading}>
+            {item => (
+                <Card
+                    key={item.id}
+                    title={item.title || `Thread #${item.no}`}
+                    description={item.content ?? ""}
+                    mediaCount={item.attachmentCount}
+                    postCount={item.replyCount}
+                    thumbnail={getThumbnailUrl(item.attachments[0], 320, 180)}
+                />
+            )}
+        </CardList>
+    );
 }
 
 export const getServerSideProps = installRouteMiddleware<BoardPageProps>()(async ({ params }, { client }) => {

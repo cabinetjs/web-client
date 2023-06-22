@@ -1,9 +1,13 @@
+import React from "react";
+
 import { queryDataSource, useDataSourceBoardsQuery } from "@apollo/queries";
 
-import { DataSourceBoardsPage } from "@pages/data-sources/[data-source-id]/boards";
+import { Card } from "@components/Card";
+import { CardList } from "@components/CardList";
 
 import { installRouteMiddleware } from "@utils/routes/middleware";
 import { PageProps } from "@utils/routes/types";
+import { getThumbnailUrl } from "@utils/attachments";
 
 interface DataSourcePageProps extends PageProps {
     itemCount: number;
@@ -17,7 +21,21 @@ export default function DataSourceBoards({ itemCount, dataSourceId }: DataSource
         },
     });
 
-    return <DataSourceBoardsPage loading={loading} items={data?.dataSource?.boards} itemCount={itemCount} />;
+    return (
+        <CardList count={itemCount} items={data?.dataSource?.boards} loading={loading}>
+            {item => (
+                <Card
+                    key={item.id}
+                    title={item.name}
+                    description={item.description}
+                    mediaCount={item.mediaCount}
+                    postCount={item.postCount}
+                    thumbnail={getThumbnailUrl(item.latestAttachment, 320, 180)}
+                    href={`/boards/${item.id}`}
+                />
+            )}
+        </CardList>
+    );
 }
 
 export const getServerSideProps = installRouteMiddleware<DataSourcePageProps>()(async ({ params }, { client }) => {
