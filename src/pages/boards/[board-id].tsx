@@ -26,13 +26,14 @@ export default function Board({ threadCount, boardId }: BoardPageProps) {
                     mediaCount={item.attachmentCount}
                     postCount={item.replyCount}
                     thumbnail={getThumbnailUrl(item.attachments[0], 320, 180)}
+                    href={`/threads/${item.id}`}
                 />
             )}
         </CardList>
     );
 }
 
-export const getServerSideProps = installRouteMiddleware<BoardPageProps>()(async ({ params }, { client }) => {
+export const getServerSideProps = installRouteMiddleware<BoardPageProps>("Threads")(async ({ params }, { client }) => {
     const boardId = params?.["board-id"];
     if (!boardId || typeof boardId !== "string") {
         throw new Error("No board id provided");
@@ -50,7 +51,6 @@ export const getServerSideProps = installRouteMiddleware<BoardPageProps>()(async
         props: {
             boardId: data.board.id,
             threadCount: data.board.threads.length,
-            title: `'${data.board.name}' Board`,
         },
     };
 });

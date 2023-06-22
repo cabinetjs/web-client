@@ -25,7 +25,7 @@ export default function DataSources({ itemCount }: DataSourcesPageProps) {
                     mediaCount={item.mediaCount}
                     postCount={item.postCount}
                     thumbnail={getThumbnailUrl(item.latestAttachment, 320, 180)}
-                    href={`/data-sources/${item.id}`}
+                    href={`/data-sources/${item.id}/boards`}
                 />
             )}
         </CardList>
