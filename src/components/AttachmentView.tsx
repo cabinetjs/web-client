@@ -8,6 +8,7 @@ import { FullAttachmentFragment } from "@apollo/queries";
 
 import { getAttachmentUrl, getThumbnailUrl } from "@utils/attachments";
 import { preloadImage, preloadVideo } from "@utils/media";
+import { MediaView } from "@components/MediaView";
 
 export interface AttachmentViewProps {
     attachment: FullAttachmentFragment;
@@ -66,19 +67,16 @@ export function AttachmentView({ attachment, thumbnailSize }: AttachmentViewProp
             {(!expanded || (expanded && loading) || loading) && (
                 <img
                     src={thumbnailUrl}
-                    alt={`Thumbnail of attachment ${attachment.id}`}
-                    style={{ opacity: loading ? 0.5 : 1 }}
                     loading="lazy"
+                    alt={`Thumbnail of attachment ${attachment.id}`}
+                    style={{
+                        opacity: loading ? 0.5 : 1,
+                        width: attachment.thumbnail.width,
+                        height: attachment.thumbnail.height,
+                    }}
                 />
             )}
-            {showLargeImage && mime.startsWith("image/") && (
-                <img src={imageUrl} alt={`Attachment ${attachment.id}`} loading="lazy" />
-            )}
-            {showLargeImage && mime.startsWith("video/") && (
-                <video controls autoPlay loop>
-                    <source src={imageUrl} type={mime} />
-                </video>
-            )}
+            {showLargeImage && <MediaView attachment={attachment} />}
         </Root>
     );
 }

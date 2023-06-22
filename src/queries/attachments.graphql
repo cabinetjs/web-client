@@ -1,3 +1,11 @@
+fragment AttachmentThumbnail on Thumbnail {
+    id
+    size
+    width
+    height
+    url
+}
+
 fragment MinimalAttachment on Attachment {
     id
     uri
@@ -11,4 +19,13 @@ fragment FullAttachment on Attachment {
     name
     hash
     size
+    width
+    height
+    thumbnail: sizedThumbnail(size: 150) {
+        id
+        size
+        width
+        height
+        url
+    }
 }

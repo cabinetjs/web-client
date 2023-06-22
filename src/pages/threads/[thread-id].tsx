@@ -1,6 +1,9 @@
+import React from "react";
+
 import { Stack, Container } from "@mui/material";
 
 import { ImageBoardPostView } from "@components/Post/ImageBoardPostView";
+import { useLayout } from "@components/Layout/useLayout";
 
 import { queryThreadMetadata, useThreadQuery } from "@apollo/queries";
 
@@ -12,9 +15,25 @@ export interface ThreadPageProps extends PageProps {
 }
 
 export default function Thread({ threadId }: ThreadPageProps) {
+    const { setAttachments } = useLayout();
     const { data, loading } = useThreadQuery({
         variables: { threadId },
     });
+
+    React.useEffect(() => {
+        if (!data?.post) {
+            return;
+        }
+
+        const allPosts = [data.post, ...data.post.replies];
+        const attachments = allPosts.flatMap(post => post.attachments);
+
+        setAttachments(attachments);
+
+        return () => {
+            setAttachments([]);
+        };
+    }, [data, loading, setAttachments]);
 
     if (loading) {
         return null;
