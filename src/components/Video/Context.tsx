@@ -2,8 +2,8 @@ import React from "react";
 import _ from "lodash";
 
 export interface VideoContextValues {
-    subscribeVolume(dom: HTMLVideoElement): void;
-    unsubscribeVolume(dom: HTMLVideoElement): void;
+    subscribeVideo(dom: HTMLVideoElement): void;
+    unsubscribeVideo(dom: HTMLVideoElement): void;
     addVolume(delta: number): void;
 }
 
@@ -40,11 +40,11 @@ export function VideoContext({ children }: { children: React.ReactNode }) {
         }, 250);
     }, []);
 
-    const subscribeVolume = React.useCallback((dom: HTMLVideoElement) => {
+    const subscribeVideo = React.useCallback((dom: HTMLVideoElement) => {
         dom.volume = volume.current;
         setVolumeSubscribers(prev => [...prev, dom]);
     }, []);
-    const unsubscribeVolume = React.useCallback((dom: HTMLVideoElement) => {
+    const unsubscribeVideo = React.useCallback((dom: HTMLVideoElement) => {
         setVolumeSubscribers(prev => prev.filter(v => v !== dom));
     }, []);
 
@@ -65,7 +65,7 @@ export function VideoContext({ children }: { children: React.ReactNode }) {
     );
 
     return (
-        <VideoReactContext.Provider value={{ subscribeVolume, unsubscribeVolume, addVolume }}>
+        <VideoReactContext.Provider value={{ subscribeVideo, unsubscribeVideo, addVolume }}>
             {children}
         </VideoReactContext.Provider>
     );

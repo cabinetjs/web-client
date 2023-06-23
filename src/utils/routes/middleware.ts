@@ -9,6 +9,11 @@ interface RouteMiddlewareClientOptions {
     client: ReturnType<typeof createClient>;
 }
 
+interface RouteMiddlewareOptions {
+    title?: string;
+    refreshable?: boolean;
+}
+
 export type RouteMiddlewareClient<
     T,
     Params extends ParsedUrlQuery = ParsedUrlQuery,
@@ -18,7 +23,9 @@ export type RouteMiddlewareClient<
     options: RouteMiddlewareClientOptions,
 ) => Promise<GetServerSidePropsResult<T>>;
 
-export function installRouteMiddleware<T extends PageProps>(title?: string) {
+export function installRouteMiddleware<T extends PageProps>(options: RouteMiddlewareOptions = {}) {
+    const { title, refreshable } = options;
+
     return (origin: RouteMiddlewareClient<Omit<T, "title"> & { title?: string }>): GetServerSideProps<T> => {
         return async context => {
             const apolloClient = createClient({ headers: context.req.headers });
@@ -31,6 +38,7 @@ export function installRouteMiddleware<T extends PageProps>(title?: string) {
                     props: {
                         ...data.props,
                         title: title ?? props.title ?? null,
+                        refreshable: refreshable ?? props.refreshable ?? false,
                     } as T,
                 };
             }

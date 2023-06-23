@@ -4,6 +4,7 @@ import { queryDataSourceCount, useDataSourcesQuery } from "@apollo/queries";
 
 import { CardList } from "@components/CardList";
 import { Card } from "@components/Card";
+import { useRefresh } from "@components/Layout/useRefresh";
 
 import { installRouteMiddleware } from "@utils/routes/middleware";
 import { PageProps } from "@utils/routes/types";
@@ -14,10 +15,11 @@ interface DataSourcesPageProps extends PageProps {
 }
 
 export default function DataSources({ itemCount }: DataSourcesPageProps) {
-    const { data, loading } = useDataSourcesQuery();
+    const { data, loading, refetch } = useDataSourcesQuery();
+    const isRefreshing = useRefresh(refetch);
 
     return (
-        <CardList count={itemCount} items={data?.dataSources} loading={loading}>
+        <CardList count={itemCount} items={data?.dataSources} loading={loading || isRefreshing}>
             {item => (
                 <Card
                     key={item.id}
@@ -32,17 +34,18 @@ export default function DataSources({ itemCount }: DataSourcesPageProps) {
     );
 }
 
-export const getServerSideProps = installRouteMiddleware<DataSourcesPageProps>("Data Sources")(
-    async (_, { client }) => {
-        const { data } = await queryDataSourceCount(client);
-        if (!data) {
-            throw new Error("No data returned from DataSourceCount query");
-        }
+export const getServerSideProps = installRouteMiddleware<DataSourcesPageProps>({
+    title: "Data Sources",
+    refreshable: true,
+})(async (_, { client }) => {
+    const { data } = await queryDataSourceCount(client);
+    if (!data) {
+        throw new Error("No data returned from DataSourceCount query");
+    }
 
-        return {
-            props: {
-                itemCount: data.dataSourceCount,
-            },
-        };
-    },
-);
+    return {
+        props: {
+            itemCount: data.dataSourceCount,
+        },
+    };
+});

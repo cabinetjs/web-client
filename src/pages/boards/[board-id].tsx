@@ -5,6 +5,7 @@ import { queryBoardThreads, useBoardThreadsQuery } from "@apollo/queries";
 import { CardList } from "@components/CardList";
 import { Card } from "@components/Card";
 import { orderThread, ThreadSort, ThreadSortOrder, ThreadToolbar } from "@components/Thread/Toolbar";
+import { useRefresh } from "@components/Layout/useRefresh";
 
 import { getThumbnailUrl } from "@utils/attachments";
 import { PageProps } from "@utils/routes/types";
@@ -17,9 +18,8 @@ export interface BoardPageProps extends PageProps {
 
 export default function Board({ threadCount, boardId }: BoardPageProps) {
     const [threadOrder, setThreadOrder] = React.useState<ThreadSort>([ThreadSortOrder.CreationDate, false]);
-    const { data, loading } = useBoardThreadsQuery({
-        variables: { boardId },
-    });
+    const { data, loading, refetch } = useBoardThreadsQuery({ variables: { boardId } });
+    const isRefreshing = useRefresh(refetch);
 
     const orderedThreads = React.useMemo(() => {
         if (!data?.board?.threads) {
@@ -32,7 +32,7 @@ export default function Board({ threadCount, boardId }: BoardPageProps) {
     return (
         <>
             <ThreadToolbar onChange={setThreadOrder} order={threadOrder[0]} reverse={threadOrder[1]} />
-            <CardList count={threadCount} items={orderedThreads} loading={loading}>
+            <CardList count={threadCount} items={orderedThreads} loading={loading || isRefreshing}>
                 {item => (
                     <Card
                         key={item.id}
@@ -49,7 +49,10 @@ export default function Board({ threadCount, boardId }: BoardPageProps) {
     );
 }
 
-export const getServerSideProps = installRouteMiddleware<BoardPageProps>("Threads")(async ({ params }, { client }) => {
+export const getServerSideProps = installRouteMiddleware<BoardPageProps>({
+    title: "Threads",
+    refreshable: true,
+})(async ({ params }, { client }) => {
     const boardId = params?.["board-id"];
     if (!boardId || typeof boardId !== "string") {
         throw new Error("No board id provided");

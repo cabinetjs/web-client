@@ -16,7 +16,7 @@ export const Root = styled.video`
 `;
 
 export function VideoView({ src, mime, withoutControls, ...rest }: VideoViewProps) {
-    const { subscribeVolume, unsubscribeVolume, addVolume } = useVideo();
+    const { subscribeVideo, unsubscribeVideo, addVolume } = useVideo();
     const [videoDOM, setVideoDOM] = React.useState<HTMLVideoElement | null>(null);
     const handleWheel = React.useCallback(
         (e: WheelEvent) => {
@@ -33,12 +33,12 @@ export function VideoView({ src, mime, withoutControls, ...rest }: VideoViewProp
             return;
         }
 
-        subscribeVolume(videoDOM);
+        subscribeVideo(videoDOM);
 
         return () => {
-            unsubscribeVolume(videoDOM);
+            unsubscribeVideo(videoDOM);
         };
-    }, [subscribeVolume, unsubscribeVolume, videoDOM]);
+    }, [subscribeVideo, unsubscribeVideo, videoDOM]);
 
     React.useEffect(() => {
         videoDOM?.addEventListener("wheel", handleWheel);

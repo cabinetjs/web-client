@@ -4,6 +4,7 @@ import { queryDataSource, useDataSourceBoardsQuery } from "@apollo/queries";
 
 import { Card } from "@components/Card";
 import { CardList } from "@components/CardList";
+import { useRefresh } from "@components/Layout/useRefresh";
 
 import { installRouteMiddleware } from "@utils/routes/middleware";
 import { PageProps } from "@utils/routes/types";
@@ -15,14 +16,11 @@ interface DataSourcePageProps extends PageProps {
 }
 
 export default function DataSourceBoards({ itemCount, dataSourceId }: DataSourcePageProps) {
-    const { data, loading } = useDataSourceBoardsQuery({
-        variables: {
-            dataSourceId,
-        },
-    });
+    const { data, loading, refetch } = useDataSourceBoardsQuery({ variables: { dataSourceId } });
+    const isRefreshing = useRefresh(refetch);
 
     return (
-        <CardList count={itemCount} items={data?.dataSource?.boards} loading={loading}>
+        <CardList count={itemCount} items={data?.dataSource?.boards} loading={loading || isRefreshing}>
             {item => (
                 <Card
                     key={item.id}
@@ -38,7 +36,10 @@ export default function DataSourceBoards({ itemCount, dataSourceId }: DataSource
     );
 }
 
-export const getServerSideProps = installRouteMiddleware<DataSourcePageProps>()(async ({ params }, { client }) => {
+export const getServerSideProps = installRouteMiddleware<DataSourcePageProps>({
+    title: "Boards",
+    refreshable: true,
+})(async ({ params }, { client }) => {
     const dataSourceId = params?.["data-source-id"];
     if (!dataSourceId || typeof dataSourceId !== "string") {
         throw new Error("No data source ID provided");
@@ -57,7 +58,6 @@ export const getServerSideProps = installRouteMiddleware<DataSourcePageProps>()(
     return {
         props: {
             itemCount: data.dataSource.boardCount,
-            title: `'${data.dataSource.id}' Data Source`,
             dataSourceId: data.dataSource.id,
         },
     };

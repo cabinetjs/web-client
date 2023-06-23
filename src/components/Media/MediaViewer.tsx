@@ -23,9 +23,10 @@ export interface ImageViewerProps {
     attachments: FullAttachmentFragment[];
     opened: boolean;
     onClose?(): void;
+    onChange?(attachment: FullAttachmentFragment): void;
 }
 
-export function MediaViewer({ attachments, opened, onClose }: ImageViewerProps) {
+export function MediaViewer({ attachments, opened, onClose, onChange }: ImageViewerProps) {
     const [index, setIndex] = React.useState(0);
     const [expanded, setExpanded] = React.useState(false);
     const thumbnailRefs = React.useMemo(() => new Map<number, HTMLButtonElement>(), []);
@@ -77,6 +78,13 @@ export function MediaViewer({ attachments, opened, onClose }: ImageViewerProps) 
             block: "nearest",
         });
     }, [index, thumbnailRefs]);
+    React.useEffect(() => {
+        if (!onChange || !attachments[index]) {
+            return;
+        }
+
+        onChange(attachments[index]);
+    }, [onChange, index, attachments]);
 
     const handleClick = React.useCallback(
         (e: React.MouseEvent) => {
