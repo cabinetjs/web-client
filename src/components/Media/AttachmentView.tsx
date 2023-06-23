@@ -4,6 +4,7 @@ import mimeTypes from "mime-types";
 
 import { MediaView } from "@components/Media/MediaView";
 import { usePreview } from "@components/Preview/Context";
+import { useVideo } from "@components/Video/Context";
 
 import { Root } from "@components/Media/AttachmentView.styles";
 
@@ -19,11 +20,39 @@ export interface AttachmentViewProps {
 }
 
 export function AttachmentView({ attachment, thumbnailSize }: AttachmentViewProps) {
+    const { addVolume } = useVideo();
     const { setAttachment } = usePreview();
     const [expanded, setExpanded] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [[imageUrl], setImageUrl] = React.useState<[string | null]>([null]);
     const [mime] = React.useState<string>(attachment.mimeType ?? (mimeTypes.lookup(attachment.extension) || ""));
+    const [thumbnailDOM, setThumbnailDOM] = React.useState<HTMLImageElement | null>(null);
+
+    const handleWheel = React.useCallback(
+        (e: WheelEvent) => {
+            if (!mime.startsWith("video/")) {
+                return;
+            }
+
+            const delta = (e.deltaY / 100) * -1 * 0.05;
+            addVolume(delta);
+
+            e.preventDefault();
+        },
+        [mime, addVolume],
+    );
+
+    React.useEffect(() => {
+        if (expanded || !thumbnailDOM) {
+            return;
+        }
+
+        thumbnailDOM.addEventListener("wheel", handleWheel, { passive: false });
+
+        return () => {
+            thumbnailDOM.removeEventListener("wheel", handleWheel);
+        };
+    }, [expanded, handleWheel, thumbnailDOM]);
 
     const handleClick = React.useCallback(() => {
         setExpanded(prev => !prev);
@@ -73,7 +102,6 @@ export function AttachmentView({ attachment, thumbnailSize }: AttachmentViewProp
 
         setAttachment(attachment);
     }, [setAttachment, attachment, showLargeImage]);
-
     const handleMouseLeave = React.useCallback(() => {
         if (showLargeImage) {
             setAttachment(null);
@@ -93,6 +121,7 @@ export function AttachmentView({ attachment, thumbnailSize }: AttachmentViewProp
         >
             {(!expanded || (expanded && loading) || loading) && (
                 <img
+                    ref={setThumbnailDOM}
                     src={thumbnailUrl}
                     loading="lazy"
                     alt={`Thumbnail of attachment ${attachment.id}`}
