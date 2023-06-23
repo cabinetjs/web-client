@@ -1,7 +1,11 @@
 import React from "react";
+import useMeasure from "react-use-measure";
 import { filesize } from "filesize";
 
-import { Box, Modal, Typography } from "@mui/material";
+import { Box, IconButton, Modal, Tooltip, Typography } from "@mui/material";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
+
 import { FullAttachmentFragment } from "@apollo/queries";
 
 import {
@@ -11,6 +15,7 @@ import {
     Thumbnail,
     ThumbnailButton,
     ThumbnailContainer,
+    ViewerControls,
     ViewerWrapper,
 } from "@components/Media/MediaViewer.styles";
 
@@ -22,7 +27,9 @@ export interface ImageViewerProps {
 
 export function MediaViewer({ attachments, opened, onClose }: ImageViewerProps) {
     const [index, setIndex] = React.useState(0);
+    const [expanded, setExpanded] = React.useState(false);
     const thumbnailRefs = React.useMemo(() => new Map<number, HTMLButtonElement>(), []);
+    const [boundRef, wrapperBounds] = useMeasure();
 
     const moveIndex = React.useCallback(
         (delta: number) => {
@@ -57,11 +64,9 @@ export function MediaViewer({ attachments, opened, onClose }: ImageViewerProps) 
             window.removeEventListener("keydown", handleKeyDown, false);
         };
     }, [moveIndex, opened]);
-
     React.useEffect(() => {
         setIndex(0);
     }, [attachments]);
-
     React.useEffect(() => {
         const thumbnailDOM = thumbnailRefs.get(index);
         if (!thumbnailDOM) {
@@ -80,7 +85,6 @@ export function MediaViewer({ attachments, opened, onClose }: ImageViewerProps) 
         },
         [moveIndex],
     );
-
     const handleContextMenu = React.useCallback(
         (e: React.MouseEvent) => {
             if (e.shiftKey) {
@@ -92,7 +96,6 @@ export function MediaViewer({ attachments, opened, onClose }: ImageViewerProps) 
         },
         [moveIndex],
     );
-
     const handleOutsideClick = React.useCallback(
         (e: React.MouseEvent) => {
             if (e.target === e.currentTarget) {
@@ -115,13 +118,45 @@ export function MediaViewer({ attachments, opened, onClose }: ImageViewerProps) 
     };
 
     const currentAttachment = attachments[index];
+    const targetDimension: "width" | "height" | undefined = React.useMemo(() => {
+        if (!currentAttachment || !currentAttachment.width || !currentAttachment.height) {
+            return undefined;
+        }
+
+        const widthPadding = wrapperBounds.width - currentAttachment.width;
+        const heightPadding = wrapperBounds.height - currentAttachment.height;
+
+        if (widthPadding < heightPadding) {
+            return "width";
+        } else {
+            return "height";
+        }
+    }, [currentAttachment, wrapperBounds]);
 
     return (
         <Modal open={opened} componentsProps={{ backdrop: { sx: { background: `rgba(0, 0, 0, 0.75)` } } }}>
             <Root opened={opened}>
-                <ViewerWrapper onClick={handleOutsideClick}>
+                <ViewerWrapper ref={boundRef} onClick={handleOutsideClick}>
+                    <ViewerControls>
+                        <Tooltip title={expanded ? "Shrink" : "Expand To Fit"}>
+                            <IconButton size="small" color="inherit" onClick={() => setExpanded(s => !s)}>
+                                {expanded ? <FullscreenExitIcon /> : <FullscreenIcon />}
+                            </IconButton>
+                        </Tooltip>
+                    </ViewerControls>
                     {currentAttachment && opened && (
-                        <Media attachment={currentAttachment} onClick={handleClick} onContextMenu={handleContextMenu} />
+                        <Media
+                            attachment={currentAttachment}
+                            onClick={handleClick}
+                            onContextMenu={handleContextMenu}
+                            style={{
+                                [targetDimension || "width"]: expanded ? "100%" : undefined,
+                                aspectRatio:
+                                    currentAttachment.width && currentAttachment.height
+                                        ? `${currentAttachment.width}/${currentAttachment.height}`
+                                        : undefined,
+                            }}
+                        />
                     )}
                     {currentAttachment && opened && (
                         <Metadata>

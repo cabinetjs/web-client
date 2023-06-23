@@ -82,3 +82,18 @@ export const Metadata = styled.div`
         background: rgba(0, 0, 0, 0.8);
     }
 `;
+
+export const ViewerControls = styled.div`
+    padding: ${({ theme }) => theme.spacing(1)};
+    border-radius: 4px;
+
+    position: absolute;
+    top: ${({ theme }) => theme.spacing(2)};
+    right: ${({ theme }) => theme.spacing(2)};
+
+    color: white;
+
+    z-index: 10000;
+
+    background: rgba(0, 0, 0, 0.5);
+`;
