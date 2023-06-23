@@ -35,24 +35,26 @@ export const ImageBoardPostView = React.memo(({ post }: ImageBoardPostViewProps)
                         <Typography variant="body2" fontWeight="inherit" color="inherit">
                             No.{post.no}
                         </Typography>
-                        {attachment && (
-                            <>
-                                <Typography
-                                    component="a"
-                                    href={getAttachmentUrl(attachment) || undefined}
-                                    variant="body2"
-                                    fontWeight="inherit"
-                                    color="inherit"
-                                >
-                                    {attachment.name}
-                                    {attachment.extension}
-                                </Typography>
-                                <Typography variant="body2" fontWeight="inherit" color="inherit">
-                                    ({`${filesize(attachment.size)}`})
-                                </Typography>
-                            </>
-                        )}
                     </Metadata>
+                    {attachment && (
+                        <Metadata>
+                            <Typography
+                                component="a"
+                                href={getAttachmentUrl(attachment) || undefined}
+                                variant="body2"
+                                fontWeight="inherit"
+                                color="inherit"
+                            >
+                                {attachment.name.length >= 25
+                                    ? `${attachment.name.slice(0, 25)}(...)`
+                                    : attachment.name}
+                                {attachment.extension}
+                            </Typography>
+                            <Typography variant="body2" fontWeight="inherit" color="inherit">
+                                ({`${filesize(attachment.size)}, ${attachment.width}x${attachment.height}`})
+                            </Typography>
+                        </Metadata>
+                    )}
                     <Content>
                         {thumbnailUrl && (
                             <Box mr={2} flex="0 0 auto" maxWidth="50%">
