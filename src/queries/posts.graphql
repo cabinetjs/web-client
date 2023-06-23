@@ -3,12 +3,26 @@ fragment MinimalPost on Post {
     no
     title
     content
+    writtenAt
     attachments {
         ...MinimalAttachment
     }
 
     attachmentCount
     replyCount
+}
+
+fragment SortablePost on Post {
+    attachments {
+        ...MinimalAttachment
+    }
+    attachmentCount
+    replyCount
+    writtenAt
+    lastReply {
+        id
+        writtenAt
+    }
 }
 
 fragment FullPost on Post {
@@ -28,6 +42,10 @@ query boardThreads($boardId: String!) {
         name
         threads: openingPosts {
             ...MinimalPost
+            lastReply {
+                id
+                writtenAt
+            }
         }
     }
 }
@@ -37,6 +55,10 @@ query dataSourceThreads($dataSourceId: String!) {
         id
         threads: openingPosts {
             ...MinimalPost
+            lastReply {
+                id
+                writtenAt
+            }
         }
     }
 }
