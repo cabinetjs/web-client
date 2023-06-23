@@ -10,7 +10,7 @@ import { AppBar } from "@components/AppBar";
 import { SideBar } from "@components/SideBar";
 import { LayoutContext, LayoutEventMap, LayoutEventTypeMap } from "@components/Layout/context";
 import { MediaViewer } from "@components/Media/MediaViewer";
-import { Preview } from "@components/Media/Preview";
+import { Preview } from "@components/Preview";
 import { usePreview } from "@components/Preview/Context";
 
 import { SIDEBAR_WIDTH } from "@constants/layout";

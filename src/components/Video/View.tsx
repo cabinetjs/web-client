@@ -8,6 +8,7 @@ export interface VideoViewProps extends React.VideoHTMLAttributes<HTMLVideoEleme
     src: string;
     mime: string;
     withoutControls?: boolean;
+    syncTime?: boolean;
 }
 
 export const Root = styled.video`
@@ -15,7 +16,7 @@ export const Root = styled.video`
     cursor: pointer;
 `;
 
-export function VideoView({ src, mime, withoutControls, ...rest }: VideoViewProps) {
+export function VideoView({ src, mime, withoutControls, syncTime, ...rest }: VideoViewProps) {
     const { subscribeVideo, unsubscribeVideo, addVolume } = useVideo();
     const [videoDOM, setVideoDOM] = React.useState<HTMLVideoElement | null>(null);
     const handleWheel = React.useCallback(
@@ -33,12 +34,12 @@ export function VideoView({ src, mime, withoutControls, ...rest }: VideoViewProp
             return;
         }
 
-        subscribeVideo(videoDOM);
+        subscribeVideo(videoDOM, { syncTime });
 
         return () => {
             unsubscribeVideo(videoDOM);
         };
-    }, [subscribeVideo, unsubscribeVideo, videoDOM]);
+    }, [subscribeVideo, unsubscribeVideo, videoDOM, syncTime]);
 
     React.useEffect(() => {
         videoDOM?.addEventListener("wheel", handleWheel);

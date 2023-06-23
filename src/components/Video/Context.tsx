@@ -1,8 +1,13 @@
 import React from "react";
 import _ from "lodash";
+import { loadVideoTime, saveVideoTime } from "@utils/media";
+
+export interface SubscribeVideoOptions {
+    syncTime?: boolean;
+}
 
 export interface VideoContextValues {
-    subscribeVideo(dom: HTMLVideoElement): void;
+    subscribeVideo(dom: HTMLVideoElement, options?: SubscribeVideoOptions): void;
     unsubscribeVideo(dom: HTMLVideoElement): void;
     addVolume(delta: number): void;
 }
@@ -40,13 +45,35 @@ export function VideoContext({ children }: { children: React.ReactNode }) {
         }, 250);
     }, []);
 
-    const subscribeVideo = React.useCallback((dom: HTMLVideoElement) => {
-        dom.volume = volume.current;
-        setVolumeSubscribers(prev => [...prev, dom]);
+    const handleTimeUpdate = React.useCallback((e: Event) => {
+        const dom = e.target;
+        if (!(dom instanceof HTMLVideoElement)) {
+            return;
+        }
+
+        saveVideoTime(dom);
     }, []);
-    const unsubscribeVideo = React.useCallback((dom: HTMLVideoElement) => {
-        setVolumeSubscribers(prev => prev.filter(v => v !== dom));
-    }, []);
+
+    const subscribeVideo = React.useCallback(
+        (dom: HTMLVideoElement, options: SubscribeVideoOptions = {}) => {
+            const { syncTime = false } = options;
+            if (syncTime) {
+                loadVideoTime(dom);
+                dom.addEventListener("timeupdate", handleTimeUpdate);
+            }
+
+            dom.volume = volume.current;
+            setVolumeSubscribers(prev => [...prev, dom]);
+        },
+        [handleTimeUpdate],
+    );
+    const unsubscribeVideo = React.useCallback(
+        (dom: HTMLVideoElement) => {
+            dom.removeEventListener("timeupdate", handleTimeUpdate);
+            setVolumeSubscribers(prev => prev.filter(v => v !== dom));
+        },
+        [handleTimeUpdate],
+    );
 
     const setVolume = React.useCallback(
         (value: number) => {

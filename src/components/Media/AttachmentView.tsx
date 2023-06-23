@@ -132,7 +132,7 @@ export function AttachmentView({ attachment, thumbnailSize }: AttachmentViewProp
                     }}
                 />
             )}
-            {showLargeImage && <MediaView attachment={attachment} />}
+            {showLargeImage && <MediaView syncTime attachment={attachment} />}
         </Root>
     );
 }

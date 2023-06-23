@@ -99,7 +99,7 @@ export class Preview extends React.Component<PreviewProps> {
                     pointerEvents: "none",
                 }}
             >
-                <MediaView withoutControls attachment={attachment} />
+                <MediaView syncTime withoutControls attachment={attachment} />
             </Box>
         );
     }

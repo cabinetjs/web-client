@@ -15,9 +15,18 @@ export interface MediaViewProps {
     className?: string;
     withoutControls?: boolean;
     style?: React.CSSProperties;
+    syncTime?: boolean;
 }
 
-export function MediaView({ attachment, onClick, className, onContextMenu, withoutControls, style }: MediaViewProps) {
+export function MediaView({
+    attachment,
+    onClick,
+    className,
+    onContextMenu,
+    withoutControls,
+    style,
+    syncTime,
+}: MediaViewProps) {
     const mime = React.useMemo<string>(
         () => attachment.mimeType ?? (mimeTypes.lookup(attachment.extension) || ""),
         [attachment],
@@ -35,7 +44,7 @@ export function MediaView({ attachment, onClick, className, onContextMenu, witho
     };
 
     if (mime.startsWith("video/")) {
-        return <VideoView src={url} mime={mime} withoutControls={withoutControls} {...props} />;
+        return <VideoView src={url} mime={mime} withoutControls={withoutControls} syncTime={syncTime} {...props} />;
     } else if (mime.startsWith("image/")) {
         return <Image key={url} src={url} alt={`Attachment ${attachment.id}`} {...props} />;
     } else {
