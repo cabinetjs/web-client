@@ -17,3 +17,9 @@ query dataSourceBoards($dataSourceId: String!) {
         }
     }
 }
+
+query boardMetadata($boardId: String!) {
+    board(id: $boardId) {
+        id
+    }
+}

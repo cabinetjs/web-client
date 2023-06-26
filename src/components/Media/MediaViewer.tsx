@@ -79,12 +79,12 @@ export function MediaViewer({ attachments, opened, onClose, onChange }: ImageVie
         });
     }, [index, thumbnailRefs]);
     React.useEffect(() => {
-        if (!onChange || !attachments[index]) {
+        if (!onChange || !attachments[index] || !opened) {
             return;
         }
 
         onChange(attachments[index]);
-    }, [onChange, index, attachments]);
+    }, [onChange, index, attachments, opened]);
 
     const handleClick = React.useCallback(
         (e: React.MouseEvent) => {

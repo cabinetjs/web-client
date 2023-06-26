@@ -1,12 +1,15 @@
 import React from "react";
 
-import { Stack, Container } from "@mui/material";
+import { Container, Box } from "@mui/material";
 
 import { ImageBoardPostView } from "@components/Post/ImageBoardPostView";
 import { useLayout } from "@components/Layout/useLayout";
+import { VirtualizedList } from "@components/VirtualizedList";
 import { useRefresh } from "@components/Layout/useRefresh";
 
-import { FullAttachmentFragment, FullPostFragment, queryThreadMetadata, useThreadQuery } from "@apollo/queries";
+import { useWindowVirtualizer } from "@tanstack/react-virtual";
+
+import { queryThreadMetadata, useThreadQuery } from "@apollo/queries";
 
 import { PageProps } from "@utils/routes/types";
 import { installRouteMiddleware } from "@utils/routes/middleware";
@@ -16,23 +19,15 @@ export interface ThreadPageProps extends PageProps {
 }
 
 export default function Thread({ threadId }: ThreadPageProps) {
-    const { setAttachments, ...layout } = useLayout();
+    const { setAttachments } = useLayout();
     const { data, loading, refetch } = useThreadQuery({ variables: { threadId } });
-    const itemsRef = React.useRef<[HTMLElement, FullPostFragment][]>([]);
+    const virtualizer = React.useRef<ReturnType<typeof useWindowVirtualizer> | null>(null);
 
     useRefresh(refetch);
 
-    const handleRef = React.useCallback(
-        (el: HTMLElement | null, index: number) => {
-            if (!el || !data?.post || loading) {
-                return;
-            }
-
-            const posts: FullPostFragment[] = [data.post, ...data.post.replies];
-            itemsRef.current[index] = [el, posts[index]];
-        },
-        [data, loading],
-    );
+    const handleVirtualizer = React.useCallback((obj: ReturnType<typeof useWindowVirtualizer>) => {
+        virtualizer.current = obj;
+    }, []);
 
     React.useEffect(() => {
         if (!data?.post) {
@@ -48,23 +43,6 @@ export default function Thread({ threadId }: ThreadPageProps) {
             setAttachments([]);
         };
     }, [data, loading, setAttachments]);
-    React.useEffect(() => {
-        const handleMediaViewerChange = (attachment: FullAttachmentFragment) => {
-            const target = itemsRef.current.find(([, post]) => post.attachments.some(a => a.id === attachment.id));
-            if (!target) {
-                return;
-            }
-
-            const [el] = target;
-            layout.scrollToTop(el);
-        };
-
-        layout.addEventListener("media-viewer-change", handleMediaViewerChange);
-
-        return () => {
-            layout.removeEventListener("media-viewer-change", handleMediaViewerChange);
-        };
-    }, [layout]);
 
     if (loading) {
         return null;
@@ -76,11 +54,13 @@ export default function Thread({ threadId }: ThreadPageProps) {
 
     return (
         <Container maxWidth="xl" sx={{ px: "0 !important" }}>
-            <Stack spacing={1}>
-                {posts.map((post, i) => (
-                    <ImageBoardPostView ref={el => handleRef(el, i)} key={post.id} post={post} />
-                ))}
-            </Stack>
+            <VirtualizedList items={posts} onVirtualizer={handleVirtualizer}>
+                {post => (
+                    <Box mb={1}>
+                        <ImageBoardPostView post={post} />
+                    </Box>
+                )}
+            </VirtualizedList>
         </Container>
     );
 }
