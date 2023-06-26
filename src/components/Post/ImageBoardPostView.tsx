@@ -30,6 +30,9 @@ export const ImageBoardPostView = React.memo(
                                     {post.title}
                                 </Typography>
                             )}
+                            <Typography variant="body2" fontWeight="inherit" color="secondary.main">
+                                {post.author || "Anonymous"}
+                            </Typography>
                             <Typography variant="body2" fontWeight="inherit" color="inherit">
                                 {dayjs(post.writtenAt).format("YYYY-MM-DD HH:mm:ss")}
                             </Typography>

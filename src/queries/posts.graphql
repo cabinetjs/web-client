@@ -29,6 +29,7 @@ fragment FullPost on Post {
     id
     no
     title
+    author
     content
     writtenAt
     attachments {
