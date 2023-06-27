@@ -14,6 +14,7 @@ import { Preview } from "@components/Preview";
 import { usePreview } from "@components/Preview/Context";
 
 import { SIDEBAR_WIDTH } from "@constants/layout";
+import { usePathname } from "next/navigation";
 
 export interface LayoutProps {
     children: React.ReactNode;
@@ -23,17 +24,28 @@ export interface LayoutProps {
 
 export function Layout({ children, title, refreshable }: LayoutProps) {
     const theme = useTheme();
+    const pathname = usePathname();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-    const { attachment } = usePreview();
+    const { attachment, setAttachment } = usePreview();
     const [attachments, setAttachments] = React.useState<FullAttachmentFragment[]>([]);
     const [mediaViewerVisibility, setMediaViewerVisibility] = React.useState<boolean>(false);
     const [sideBarOpen, setSideBarOpen] = React.useState<boolean>(false);
     const [appBarHeight, setAppBarHeight] = React.useState<number>(0);
-
+    const oldPathname = React.useRef<string>(pathname);
     const eventMap = React.useRef<LayoutEventMap>({
         refresh: [],
         "media-viewer-change": [],
     });
+
+    React.useEffect(() => {
+        if (pathname !== oldPathname.current) {
+            setAttachment(null);
+            setAttachments([]);
+            setMediaViewerVisibility(false);
+
+            oldPathname.current = pathname;
+        }
+    }, [pathname, setAttachment]);
 
     React.useEffect(() => {
         if (mediaViewerVisibility) {
