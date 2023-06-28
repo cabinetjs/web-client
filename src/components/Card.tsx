@@ -13,7 +13,7 @@ import { Nullable } from "@utils/types";
 
 export interface NormalCardProps {
     title: string;
-    description?: string;
+    description?: Nullable<string>;
     thumbnail?: Nullable<string>;
     mediaCount: number;
     postCount: number;
