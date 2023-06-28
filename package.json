@@ -43,14 +43,21 @@
         "@graphql-codegen/typescript-graphql-files-modules": "^2.2.1",
         "@graphql-codegen/typescript-operations": "^4.0.1",
         "@graphql-codegen/typescript-react-apollo": "^3.3.7",
+        "@semantic-release/commit-analyzer": "^10.0.1",
+        "@semantic-release/git": "^10.0.1",
+        "@semantic-release/github": "^9.0.3",
+        "@semantic-release/npm": "^10.0.4",
+        "@semantic-release/release-notes-generator": "^11.0.3",
         "@svgr/webpack": "^8.0.1",
         "@types/lodash": "^4.14.195",
         "@types/mime-types": "^2.1.1",
         "@types/shortid": "^0.0.29",
         "@typescript-eslint/eslint-plugin": "^5.60.0",
         "@typescript-eslint/parser": "^5.60.0",
+        "conventional-changelog-conventionalcommits": "^6.1.0",
         "eslint-config-prettier": "^8.8.0",
         "eslint-plugin-prettier": "^4.2.1",
-        "prettier": "^2.8.8"
+        "prettier": "^2.8.8",
+        "semantic-release": "^21.0.5"
     }
 }
