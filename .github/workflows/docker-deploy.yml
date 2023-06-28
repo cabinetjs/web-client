@@ -39,6 +39,10 @@ jobs:
               run: |
                   yarn
 
+            - name: Generate graphql codes
+              run: |
+                  yarn codegen
+
             - name: Lint
               run: |
                   yarn lint
