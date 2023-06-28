@@ -4,7 +4,9 @@ export default function Home() {
     return <>Home</>;
 }
 
-export const getServerSideProps = installRouteMiddleware("Home")(async () => {
+export const getServerSideProps = installRouteMiddleware({
+    title: "Home",
+})(async () => {
     return {
         props: {},
     };
