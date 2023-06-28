@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
+    output: "standalone",
 
     webpack(config) {
         // Grab the existing rule that handles SVG imports
