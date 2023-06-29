@@ -22,7 +22,11 @@ export default function App({ Component, pageProps }: AppProps<PageProps>) {
             <VideoContext>
                 <ApolloProvider client={apolloClient}>
                     <ThemeProvider theme={theme}>
-                        <Layout title={pageProps.title} refreshable={pageProps.refreshable}>
+                        <Layout
+                            title={pageProps.title}
+                            refreshable={pageProps.refreshable}
+                            dataSources={pageProps.dataSources}
+                        >
                             <Component {...pageProps} />
                         </Layout>
                     </ThemeProvider>

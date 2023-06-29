@@ -17,13 +17,16 @@ import { usePreview } from "@components/Preview/Context";
 
 import { SIDEBAR_WIDTH } from "@constants/layout";
 
+import { PageProps } from "@utils/routes/types";
+
 export interface LayoutProps {
     children: React.ReactNode;
     title?: string;
     refreshable?: boolean;
+    dataSources?: PageProps["dataSources"];
 }
 
-export function Layout({ children, title, refreshable }: LayoutProps) {
+export function Layout({ children, title, refreshable, dataSources }: LayoutProps) {
     const theme = useTheme();
     const pathname = usePathname();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -106,7 +109,7 @@ export function Layout({ children, title, refreshable }: LayoutProps) {
                     onHeightChange={setAppBarHeight}
                     onRefresh={refreshable ? handleRefresh : undefined}
                 />
-                <SideBar open={sideBarOpen} onClose={() => setSideBarOpen(false)} />
+                <SideBar open={sideBarOpen} onClose={() => setSideBarOpen(false)} dataSources={dataSources} />
                 <Box
                     maxWidth={isMobile ? "100%" : `calc(100% - ${SIDEBAR_WIDTH}px)`}
                     component="main"

@@ -5,30 +5,27 @@ import { Box, Hidden, ThemeProvider, Typography } from "@mui/material";
 import { Menu } from "@components/Menu";
 
 import { NAV_MENU_ITEMS } from "@constants/nav";
-import { useMinimalDataSourcesQuery } from "@apollo/queries";
 import { sideBarTheme } from "@styles/theme";
-import { buildMenuItems } from "@utils/dataSources";
 
 import { Logo, Root, TitleBar } from "@components/SideBar.styles";
+
+import { buildMenuItems } from "@utils/dataSources";
+import { PageProps } from "@utils/routes/types";
 
 export interface SideBarProps {
     open: boolean;
     onClose?(): void;
+    dataSources?: PageProps["dataSources"];
 }
 
-export function SideBar({ open, onClose }: SideBarProps) {
-    const { data, loading } = useMinimalDataSourcesQuery();
+export function SideBar({ open, onClose, dataSources }: SideBarProps) {
     const dataSourceMenuItems = React.useMemo(() => {
-        if (!data?.dataSources || loading) {
-            return [];
+        if (!dataSources) {
+            throw new Error("Available data sources not provided");
         }
 
-        return buildMenuItems(data.dataSources);
-    }, [data, loading]);
-
-    if (!data?.dataSources && !loading) {
-        throw new Error("Failed to load data source list");
-    }
+        return buildMenuItems(dataSources);
+    }, [dataSources]);
 
     const content = (
         <>

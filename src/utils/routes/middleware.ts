@@ -5,6 +5,7 @@ import { createClient } from "@apollo/createClient";
 
 import { getApiUrl } from "@utils/getApiUrl";
 import { PageProps } from "@utils/routes/types";
+import { queryMinimalDataSources } from "@apollo/queries";
 
 interface RouteMiddlewareClientOptions {
     client: ReturnType<typeof createClient>;
@@ -35,6 +36,9 @@ export function installRouteMiddleware<T extends PageProps>(options: RouteMiddle
             const apolloClient = createClient({ headers: context.req.headers, url: apiUrl.server });
             const data = await origin(context, { client: apolloClient });
 
+            const { data: dataSourceData } = await queryMinimalDataSources(apolloClient);
+            if (!dataSourceData) throw new Error("Failed to fetch available data sources");
+
             if ("props" in data) {
                 const props = await data.props;
 
@@ -44,6 +48,7 @@ export function installRouteMiddleware<T extends PageProps>(options: RouteMiddle
                         title: title ?? props.title ?? null,
                         refreshable: refreshable ?? props.refreshable ?? false,
                         apiUrl: apiUrl.client ?? "",
+                        dataSources: dataSourceData.dataSources,
                     } as T,
                 };
             }
