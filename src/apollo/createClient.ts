@@ -11,12 +11,12 @@ let apolloClient: ApolloClient<NormalizedCacheObject> | undefined;
 
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = String(0);
 
-const createApolloClient = (headers: IncomingHttpHeaders | null = null) => {
-    const enhancedFetch = (url: RequestInfo, init: RequestInit) => {
+const createApolloClient = (uri: string | null, headers: IncomingHttpHeaders | null = null) => {
+    const enhancedFetch = (url: RequestInfo, init?: RequestInit) => {
         return fetch(url, {
             ...init,
             headers: {
-                ...init.headers,
+                ...init?.headers,
                 "Access-Control-Allow-Origin": "*",
                 Cookie: headers?.cookie ?? "",
             },
@@ -25,11 +25,15 @@ const createApolloClient = (headers: IncomingHttpHeaders | null = null) => {
 
     const createHttpLink = () => {
         return new HttpLink({
-            uri: "http://localhost:4000/graphql",
-            fetchOptions: {
-                mode: "cors",
+            uri: uri ?? "",
+            fetchOptions: { mode: "cors" },
+            fetch: (url: RequestInfo, init?: RequestInit) => {
+                if (!uri) {
+                    throw new Error("api url is required");
+                }
+
+                return enhancedFetch(url, init);
             },
-            fetch: enhancedFetch,
         });
     };
 
@@ -66,30 +70,25 @@ type InitialState = NormalizedCacheObject | undefined;
 interface IInitializeApollo {
     headers?: IncomingHttpHeaders | null;
     initialState?: InitialState | null;
+    url?: string | null;
 }
 
-export const createClient = ({ headers, initialState }: IInitializeApollo = { headers: null, initialState: null }) => {
-    const localApolloClient = apolloClient ?? createApolloClient(headers);
-
-    // If your page has Next.js data fetching methods that use Apollo Client, the initial stat
-    // get hydrated here
+export const createClient = (options?: IInitializeApollo) => {
+    const { headers = null, initialState = null, url = null } = options || {};
+    const localApolloClient = apolloClient ?? createApolloClient(url, headers);
     if (initialState) {
         const existingCache = localApolloClient.extract();
         const data = merge(initialState, existingCache, {
-            // combine arrays using object equality (like in sets)
             arrayMerge: (destinationArray, sourceArray) => [
                 ...sourceArray,
                 ...destinationArray.filter(d => sourceArray.every(s => !isEqual(d, s))),
             ],
         });
 
-        // Restore the cache with the merged data
         localApolloClient.cache.restore(data);
     }
 
-    // For SSG and SSR always create a new Apollo Client
     if (typeof window === "undefined") return localApolloClient;
-    // Create the Apollo Client once in the client
     if (!apolloClient) apolloClient = localApolloClient;
 
     return localApolloClient;

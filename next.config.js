@@ -3,6 +3,13 @@ const nextConfig = {
     reactStrictMode: true,
     output: "standalone",
 
+    serverRuntimeConfig: {
+        apiUrl: process.env.SERV_GRAPHQL_URI,
+    },
+    publicRuntimeConfig: {
+        apiUrl: process.env.GRAPHQL_URI,
+    },
+
     webpack(config) {
         // Grab the existing rule that handles SVG imports
         const fileLoaderRule = config.module.rules.find(rule => rule.test?.test?.(".svg"));

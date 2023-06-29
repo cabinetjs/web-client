@@ -5,5 +5,7 @@ import { createClient } from "./createClient";
 
 export function useApollo(pageProps: AppProps["pageProps"]) {
     const state = pageProps.__APOLLO_STATE__;
-    return useMemo(() => createClient({ initialState: state }), [state]);
+    const apiUrl = pageProps.apiUrl;
+
+    return useMemo(() => createClient({ initialState: state, url: apiUrl }), [state, apiUrl]);
 }

@@ -3,6 +3,7 @@ import { ParsedUrlQuery } from "querystring";
 
 import { createClient } from "@apollo/createClient";
 
+import { getApiUrl } from "@utils/getApiUrl";
 import { PageProps } from "@utils/routes/types";
 
 interface RouteMiddlewareClientOptions {
@@ -26,9 +27,12 @@ export type RouteMiddlewareClient<
 export function installRouteMiddleware<T extends PageProps>(options: RouteMiddlewareOptions = {}) {
     const { title, refreshable } = options;
 
-    return (origin: RouteMiddlewareClient<Omit<T, "title"> & { title?: string }>): GetServerSideProps<T> => {
+    return (origin: RouteMiddlewareClient<Omit<T, "title" | "apiUrl"> & { title?: string }>): GetServerSideProps<T> => {
         return async context => {
-            const apolloClient = createClient({ headers: context.req.headers });
+            const apiUrl = getApiUrl();
+            if (!apiUrl) throw new Error("No API URL found");
+
+            const apolloClient = createClient({ headers: context.req.headers, url: apiUrl.server });
             const data = await origin(context, { client: apolloClient });
 
             if ("props" in data) {
@@ -39,6 +43,7 @@ export function installRouteMiddleware<T extends PageProps>(options: RouteMiddle
                         ...data.props,
                         title: title ?? props.title ?? null,
                         refreshable: refreshable ?? props.refreshable ?? false,
+                        apiUrl: apiUrl.client ?? "",
                     } as T,
                 };
             }
