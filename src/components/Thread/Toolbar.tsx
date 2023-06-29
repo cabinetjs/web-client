@@ -72,6 +72,7 @@ export function ThreadToolbar({ order, onChange, reverse, loading = false }: Thr
                     label="Reversed"
                     labelPlacement="start"
                     sx={{ mr: 1 }}
+                    checked={reverse}
                     onChange={handleReverseChange}
                     componentsProps={{
                         typography: {
