@@ -40,7 +40,6 @@ export function Layout({ children, title, refreshable }: LayoutProps) {
     React.useEffect(() => {
         if (pathname !== oldPathname.current) {
             setAttachment(null);
-            setAttachments([]);
             setMediaViewerVisibility(false);
 
             oldPathname.current = pathname;

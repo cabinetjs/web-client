@@ -20,6 +20,7 @@ export interface ThreadPageProps extends PageProps {
 
 export default function Thread({ threadId }: ThreadPageProps) {
     const { setAttachments } = useLayout();
+    const setAttachmentRef = React.useRef(setAttachments);
     const { data, loading, refetch } = useThreadQuery({ variables: { threadId } });
     const virtualizer = React.useRef<ReturnType<typeof useWindowVirtualizer> | null>(null);
 
@@ -38,11 +39,15 @@ export default function Thread({ threadId }: ThreadPageProps) {
         const attachments = allPosts.flatMap(post => post.attachments);
 
         setAttachments(attachments);
+    }, [data, loading, setAttachments]);
+
+    React.useEffect(() => {
+        const setAttachment = setAttachmentRef.current;
 
         return () => {
-            setAttachments([]);
+            setAttachment([]);
         };
-    }, [data, loading, setAttachments]);
+    }, []);
 
     if (loading) {
         return null;
