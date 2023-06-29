@@ -57,7 +57,7 @@ export function ThreadToolbar({ order, onChange, reverse, loading = false }: Thr
         return (
             <Container maxWidth="xl">
                 <Box mb={2} display="flex" justifyContent="flex-end" alignItems="flex-end">
-                    <Skeleton animation="wave" variant="rectangular" height={40} width={300} />
+                    <Skeleton variant="rectangular" height={40} width={300} />
                 </Box>
             </Container>
         );

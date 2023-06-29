@@ -34,10 +34,10 @@ export function Card(props: CardProps) {
     let href: string | null = null;
 
     if ("skeleton" in props) {
-        title = <Skeleton variant="text" width="100%" animation="wave" />;
-        description = <Skeleton variant="text" width="100%" animation="wave" />;
-        tags = <Skeleton variant="text" width="50%" animation="wave" />;
-        thumbnail = <Skeleton variant="rectangular" height="100%" animation="wave" />;
+        title = <Skeleton variant="text" width="100%" />;
+        description = <Skeleton variant="text" width="100%" />;
+        tags = <Skeleton variant="text" width="50%" />;
+        thumbnail = <Skeleton variant="rectangular" height="100%" />;
     } else {
         if (props.description) {
             description = stripHtml(props.description).result;
