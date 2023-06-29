@@ -23,6 +23,7 @@ export class Preview extends React.Component<PreviewProps> {
     public componentDidMount() {
         this.isUnmounted = false;
         window.requestAnimationFrame(this.handleRender);
+        window.addEventListener("mousemove", this.handleMouseMove, false);
 
         const { attachment } = this.props;
         if (!attachment) {
@@ -30,7 +31,6 @@ export class Preview extends React.Component<PreviewProps> {
         }
 
         this.mimeType = attachment.mimeType ?? (mimeTypes.lookup(attachment.extension) || "");
-        window.addEventListener("mousemove", this.handleMouseMove, false);
     }
     public componentDidUpdate(prevProps: Readonly<PreviewProps>) {
         if (prevProps.attachment !== this.props.attachment) {
