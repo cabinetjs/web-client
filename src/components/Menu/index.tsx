@@ -22,22 +22,9 @@ export interface MenuProps {
 }
 
 export function Menu(props: MenuProps) {
-    const [items, setItems] = React.useState(makeInternalArray(props.items));
+    const [items] = React.useState(makeInternalArray(props.items));
     const [openedMap, setOpenedMap] = React.useState<{ [key: string]: boolean }>({});
     const pathname = usePathname();
-
-    React.useEffect(() => {
-        setItems(makeInternalArray(props.items));
-    }, [props.items]);
-
-    React.useEffect(() => {
-        const result: Record<string, boolean> = {};
-        for (const item of items) {
-            result[item.key] = false;
-        }
-
-        setOpenedMap(result);
-    }, [items]);
 
     const handleItemClick = (e: React.MouseEvent, item: MenuItem, key: string) => {
         if (item.children) {
