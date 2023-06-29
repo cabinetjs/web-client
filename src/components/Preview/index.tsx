@@ -1,11 +1,11 @@
 import React from "react";
+import mimeTypes from "mime-types";
 
 import { Box } from "@mui/material";
 
-import { MediaView } from "@components/Media/MediaView";
+import { Media } from "@components/Preview/index.styles";
 
 import { FullAttachmentFragment } from "@apollo/queries";
-import mimeTypes from "mime-types";
 
 export interface PreviewProps {
     attachment: FullAttachmentFragment | null;
@@ -17,6 +17,8 @@ export class Preview extends React.Component<PreviewProps> {
     public mimeType: string | null = null;
     public mouseX = 0;
     public mouseY = 0;
+    public width = 0;
+    public height = 0;
 
     public componentDidMount() {
         this.isUnmounted = false;
@@ -38,6 +40,16 @@ export class Preview extends React.Component<PreviewProps> {
             }
 
             this.mimeType = attachment.mimeType ?? (mimeTypes.lookup(attachment.extension) || "");
+
+            if (!attachment.width || !attachment.height) {
+                return;
+            }
+
+            const maxWidth = document.documentElement.clientWidth;
+            const maxHeight = document.documentElement.clientHeight;
+            const scale = Math.min(1, maxWidth / attachment.width, maxHeight / attachment.height);
+            this.width = attachment.width * scale;
+            this.height = attachment.height * scale;
         }
     }
     public componentWillUnmount() {
@@ -75,6 +87,8 @@ export class Preview extends React.Component<PreviewProps> {
 
         const { style } = dom;
         style.top = `${top.toFixed(2)}px`;
+        style.width = `${this.width}px`;
+        style.height = `${this.height}px`;
         if (this.mouseX <= threshold) {
             style.left = `${marginX}px`;
             style.right = "";
@@ -92,6 +106,7 @@ export class Preview extends React.Component<PreviewProps> {
 
         return (
             <Box
+                display="block"
                 ref={this.rootDOM}
                 position="fixed"
                 zIndex={10000}
@@ -99,7 +114,7 @@ export class Preview extends React.Component<PreviewProps> {
                     pointerEvents: "none",
                 }}
             >
-                <MediaView syncTime withoutControls attachment={attachment} />
+                <Media syncTime withoutControls attachment={attachment} />
             </Box>
         );
     }
