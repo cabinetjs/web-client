@@ -16,15 +16,15 @@ import { installRouteMiddleware } from "@utils/routes/middleware";
 
 export interface ThreadPageProps extends PageProps {
     threadId: string;
+    postCount: number;
 }
 
-export default function Thread({ threadId }: ThreadPageProps) {
+export default function Thread({ threadId, postCount }: ThreadPageProps) {
     const { setAttachments } = useLayout();
     const setAttachmentRef = React.useRef(setAttachments);
     const { data, loading, refetch } = useThreadQuery({ variables: { threadId } });
     const virtualizer = React.useRef<ReturnType<typeof useWindowVirtualizer> | null>(null);
-
-    useRefresh(refetch);
+    const isRefreshing = useRefresh(refetch);
 
     const handleVirtualizer = React.useCallback((obj: ReturnType<typeof useWindowVirtualizer>) => {
         virtualizer.current = obj;
@@ -49,8 +49,20 @@ export default function Thread({ threadId }: ThreadPageProps) {
         };
     }, []);
 
-    if (loading) {
-        return null;
+    if (loading || isRefreshing) {
+        const items = Array.from({ length: postCount }, () => true);
+
+        return (
+            <Container maxWidth="xl" sx={{ px: "0 !important" }}>
+                <VirtualizedList items={items}>
+                    {() => (
+                        <Box mb={1}>
+                            <ImageBoardPostView />
+                        </Box>
+                    )}
+                </VirtualizedList>
+            </Container>
+        );
     } else if (!data?.post) {
         throw new Error("Thread with given id not found");
     }
@@ -94,6 +106,7 @@ export const getServerSideProps = installRouteMiddleware<ThreadPageProps>({
         props: {
             title: titleTokens.join(" - "),
             threadId: data.post.id,
+            postCount: data.post.replyCount + 1,
         },
     };
 });
