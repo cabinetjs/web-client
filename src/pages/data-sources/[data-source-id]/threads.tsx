@@ -2,7 +2,8 @@ import React from "react";
 
 import { queryDataSourceThreads, useDataSourceThreadsQuery } from "@apollo/queries";
 
-import { orderThread, ThreadSort, ThreadSortOrder, ThreadToolbar } from "@components/Thread/Toolbar";
+import { orderThread, ThreadToolbar } from "@components/Thread/Toolbar";
+import { useThreadSortOrder } from "@components/Thread/Toolbar.utils";
 import { CardList } from "@components/CardList";
 import { Card } from "@components/Card";
 import { useRefresh } from "@components/Layout/useRefresh";
@@ -17,7 +18,7 @@ export interface DataSourceThreadsPageProps extends PageProps {
 }
 
 export default function DataSourceThreads({ dataSourceId, threadCount }: DataSourceThreadsPageProps) {
-    const [threadOrder, setThreadOrder] = React.useState<ThreadSort>([ThreadSortOrder.CreationDate, false]);
+    const [threadOrder, setThreadOrder] = useThreadSortOrder();
     const { data, loading, refetch } = useDataSourceThreadsQuery({ variables: { dataSourceId } });
     const isRefreshing = useRefresh(refetch);
 
@@ -31,7 +32,12 @@ export default function DataSourceThreads({ dataSourceId, threadCount }: DataSou
 
     return (
         <>
-            <ThreadToolbar onChange={setThreadOrder} order={threadOrder[0]} reverse={threadOrder[1]} />
+            <ThreadToolbar
+                loading={loading || isRefreshing}
+                onChange={setThreadOrder}
+                order={threadOrder[0]}
+                reverse={threadOrder[1]}
+            />
             <CardList count={threadCount} items={orderedThreads} loading={loading || isRefreshing}>
                 {item => (
                     <Card

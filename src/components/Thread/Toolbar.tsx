@@ -12,6 +12,7 @@ import {
     Switch,
     FormControlLabelProps,
     Container,
+    Skeleton,
 } from "@mui/material";
 import { SortablePostFragment } from "@apollo/queries";
 
@@ -25,14 +26,16 @@ export enum ThreadSortOrder {
 export type ThreadSort = [ThreadSortOrder, boolean];
 
 export interface ThreadToolbarProps {
+    loading?: boolean;
     order: ThreadSortOrder;
     reverse: boolean;
     onChange: (sort: ThreadSort) => void;
 }
 
-export function ThreadToolbar({ order, onChange, reverse }: ThreadToolbarProps) {
+export function ThreadToolbar({ order, onChange, reverse, loading = false }: ThreadToolbarProps) {
     const [reversed, setReversed] = React.useState<boolean>(reverse);
     const [orderType, setOrderType] = React.useState<ThreadSortOrder>(order);
+    const [mounted, setMounted] = React.useState<boolean>(false);
 
     const handleChange: SelectProps<ThreadSortOrder>["onChange"] = event => {
         setOrderType(event.target.value as ThreadSortOrder);
@@ -43,8 +46,22 @@ export function ThreadToolbar({ order, onChange, reverse }: ThreadToolbarProps) 
     };
 
     React.useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    React.useEffect(() => {
         onChange([orderType, reversed]);
     }, [onChange, orderType, reversed]);
+
+    if (!mounted || loading) {
+        return (
+            <Container maxWidth="xl">
+                <Box mb={2} display="flex" justifyContent="flex-end" alignItems="flex-end">
+                    <Skeleton animation="wave" variant="rectangular" height={40} width={300} />
+                </Box>
+            </Container>
+        );
+    }
 
     return (
         <Container maxWidth="xl">

@@ -4,7 +4,8 @@ import { queryBoardThreads, useBoardThreadsQuery } from "@apollo/queries";
 
 import { CardList } from "@components/CardList";
 import { Card } from "@components/Card";
-import { orderThread, ThreadSort, ThreadSortOrder, ThreadToolbar } from "@components/Thread/Toolbar";
+import { orderThread, ThreadToolbar } from "@components/Thread/Toolbar";
+import { useThreadSortOrder } from "@components/Thread/Toolbar.utils";
 import { useRefresh } from "@components/Layout/useRefresh";
 
 import { getThumbnailUrl } from "@utils/attachments";
@@ -17,9 +18,13 @@ export interface BoardPageProps extends PageProps {
 }
 
 export default function Board({ threadCount, boardId }: BoardPageProps) {
-    const [threadOrder, setThreadOrder] = React.useState<ThreadSort>([ThreadSortOrder.CreationDate, false]);
+    const [threadOrder, setThreadOrder] = useThreadSortOrder();
     const { data, loading, refetch } = useBoardThreadsQuery({ variables: { boardId } });
     const isRefreshing = useRefresh(refetch);
+
+    React.useEffect(() => {
+        localStorage.setItem("thread-order", JSON.stringify(threadOrder));
+    }, [threadOrder]);
 
     const orderedThreads = React.useMemo(() => {
         if (!data?.board?.threads) {
