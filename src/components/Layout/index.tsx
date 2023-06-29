@@ -1,8 +1,10 @@
 import React from "react";
 
 import Head from "next/head";
+import { usePathname } from "next/navigation";
 
 import { Box, CssBaseline, Toolbar, useMediaQuery, useTheme } from "@mui/material";
+import NoSsr from "@mui/base/NoSsr";
 
 import { FullAttachmentFragment } from "@apollo/queries";
 
@@ -14,7 +16,6 @@ import { Preview } from "@components/Preview";
 import { usePreview } from "@components/Preview/Context";
 
 import { SIDEBAR_WIDTH } from "@constants/layout";
-import { usePathname } from "next/navigation";
 
 export interface LayoutProps {
     children: React.ReactNode;
@@ -87,7 +88,7 @@ export function Layout({ children, title, refreshable }: LayoutProps) {
         [appBarHeight],
     );
 
-    return (
+    const content = (
         <LayoutContext.Provider
             value={{
                 setAttachments,
@@ -98,10 +99,6 @@ export function Layout({ children, title, refreshable }: LayoutProps) {
             }}
         >
             <Box width="100%" display="flex">
-                <Head>
-                    <title>{title ? `${title} - CabinetJS` : "CabinetJS"}</title>
-                </Head>
-                <CssBaseline />
                 <AppBar
                     title={title}
                     hasAttachments={attachments.length > 0}
@@ -127,5 +124,15 @@ export function Layout({ children, title, refreshable }: LayoutProps) {
                 <Preview attachment={attachment} />
             </Box>
         </LayoutContext.Provider>
+    );
+
+    return (
+        <>
+            <Head>
+                <title>{title ? `${title} - CabinetJS` : "CabinetJS"}</title>
+            </Head>
+            <CssBaseline />
+            <NoSsr>{content}</NoSsr>
+        </>
     );
 }
