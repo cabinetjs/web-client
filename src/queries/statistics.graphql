@@ -1,0 +1,26 @@
+fragment ChartData on AttachmentStatus {
+    fileSize
+    fileSizeDelta
+    count
+    countDelta
+}
+
+query statistics($unit: TimeSpanUnit!, $value: Int!, $timeRange: TimeRange!) {
+    statistic(timeSpanUnit: $unit, timeSpanValue: $value) {
+        boardCount
+        postCount
+        attachmentCount
+        fileSize
+        oldBoardCount
+        oldPostCount
+        oldAttachmentCount
+        oldFileSize
+        lastCrawlingLog {
+            startedAt
+        }
+    }
+
+    attachmentStatus(range: $timeRange) {
+        ...ChartData
+    }
+}
